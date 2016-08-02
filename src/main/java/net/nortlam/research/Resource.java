@@ -119,8 +119,19 @@ public class Resource {
     
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response replace(Person person) {
-        LOG.log(Level.INFO, ">>> replace():{0}", person.toString());
+    public Response replace(String content) {
+        LOG.log(Level.INFO, ">>> replace():{0}", content.toString());
+        
+        try {
+            Document document = Document.parse(content);
+            
+            
+            
+        } catch(JSONParseException ex) {
+            LOG.log(Level.SEVERE, "### JSON PARSE EXCEPTION:{0}",
+                    ex.getMessage());
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
         
         return Response.ok().build();
     }
