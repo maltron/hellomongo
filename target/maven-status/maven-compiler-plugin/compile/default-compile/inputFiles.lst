@@ -1,4 +1,9 @@
-/Users/mauricio/NetBeansProjects/mongo/helloworld/src/main/java/net/nortlam/research/setup/MongoProvider.java
-/Users/mauricio/NetBeansProjects/mongo/helloworld/src/main/java/net/nortlam/research/Resource.java
-/Users/mauricio/NetBeansProjects/mongo/helloworld/src/main/java/net/nortlam/research/Person.java
-/Users/mauricio/NetBeansProjects/mongo/helloworld/src/main/java/net/nortlam/research/setup/RESTEnable.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/notlam/research/exception/NoContentException.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/nortlam/research/Person.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/notlam/research/exception/MongoWriteConcernExceptionMapper.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/nortlam/research/setup/MongoProvider.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/notlam/research/exception/NoContentExceptionMapper.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/notlam/research/exception/MongoWriteExceptionMapper.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/nortlam/research/Resource.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/nortlam/research/setup/RESTEnable.java
+/Users/mauricio/projects/java/studies/hellomongo/src/main/java/net/notlam/research/exception/MongoExceptionMapper.java

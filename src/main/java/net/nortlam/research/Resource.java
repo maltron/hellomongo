@@ -1,22 +1,22 @@
 package net.nortlam.research;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteConcernException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.util.JSON;
-import com.mongodb.util.JSONParseException;
+import com.mongodb.client.model.Sorts;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -26,13 +26,14 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.nortlam.research.setup.MongoProvider;
+import net.notlam.research.exception.NoContentException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
  *
  * @author Mauricio "Maltron" Leal <maltron@gmail.com> */
-@Path("/")
+@Path("/person")
 public class Resource {
 
     private static final Logger LOG = Logger.getLogger(Resource.class.getName());
@@ -42,110 +43,97 @@ public class Resource {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response all() {
+    public Response all() throws NoContentException {
         LOG.log(Level.INFO, ">> all()");
         
-        List<Document> all = getCollection().find().into(new ArrayList<Document>());
-        for(Document document: all) {
-            System.out.printf(">>> DOCUMENT:%s ID:%s\n", document.toString(), document.get("_id"));
-            System.out.printf(">>> DOCUMENT (JSON):%s\n", document.toJson());
-            
-            
-            for(String key: document.keySet()) {
-                System.out.printf(">>> KEY:%s  VALUE:%s\n", key, document.get(key));
-            }
-            
-        }
+        Collection<Person> all = new ArrayList<>();
+        for(Document document: getCollection().find().sort(
+                Sorts.ascending(Person.TAG_FIRST_NAME, Person.TAG_LAST_NAME)))
+            all.add(new Person(document));
         
-        
-        GenericEntity<List<Document>> result = 
-                new GenericEntity<List<Document>>(all){};
+        GenericEntity<Collection<Person>> result = 
+                new GenericEntity<Collection<Person>>(all){};
         
         return Response.ok(result).build();
     }
     
-    @GET @Path("{ID}")
+    @Path("/{ID}")
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response fetch(@PathParam("ID")String ID) {
-        LOG.log(Level.INFO, ">>> fetch():{0}", ID);
+    public Response fetchByID(@PathParam("ID")String ID) throws NotFoundException {
+        Document document = new Document().append("_id",new ObjectId(ID));
+        Document found = getCollection().find(document).first();
+        LOG.log(Level.INFO, ">>> fetchByID() {0}", found);
         
-        Person found = null;
-        try {
-            ObjectId objectID = new ObjectId(ID);
-            BasicDBObject query = new BasicDBObject("_id", objectID);
-            found = (Person)getCollection().find(query).first();
-            if(found == null)
-                return Response.status(Response.Status.NOT_FOUND).build();
-            
-        } catch(IllegalArgumentException ex) {
-            // In case ID it's not an hex properly 
-            LOG.log(Level.SEVERE, "### fetch() ILLEGAL ARGUMENT EXCEPTION:{0}",
-                    ex.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        if(found == null) 
+            throw new NotFoundException("ID "+ID+" not found");
         
-        return Response.ok(found, MediaType.APPLICATION_JSON).build();
+        return Response.ok(found.toJson(), MediaType.APPLICATION_JSON).build();
     }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(String content) {
-        LOG.log(Level.INFO, ">>> create():{0}", content.toString());
-        Document document = null;
-        try {
-            document = Document.parse(content);
-            getCollection().insertOne(document);
-        } catch(JSONParseException ex) {
-            LOG.log(Level.SEVERE, "### JSON PARSE EXCEPTION:{0}", ex.getMessage());
-            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+    public Response create(Person person) 
+                throws MongoWriteException, 
+                        MongoWriteConcernException, MongoException {
+        Document document = person.toDocument();
+        getCollection().insertOne(document);
+        LOG.log(Level.INFO, ">>> create() {0}", document.toJson());
+        LOG.log(Level.INFO, ">>> ObjectID: HEX:{0} String:{1}", new Object[] {
+            document.getObjectId("_id").toString(),
+            document.getObjectId("_id").toHexString()}
+        );
             
-        } catch(MongoWriteException ex) {
-            LOG.log(Level.SEVERE, "### MONGO WRITE EXCEPTION:{0}",
-                    ex.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch(MongoWriteConcernException ex) {
-            LOG.log(Level.SEVERE, "### MONGO WRITE CONCERN EXCEPTION:{0}",
-                    ex.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        } catch(MongoException ex) {
-            LOG.log(Level.SEVERE, "### MONGO EXCEPTION:{0}",
-                    ex.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-        
-        return Response.ok(document, MediaType.APPLICATION_JSON).build();
+        // Returns the created ID for this information
+        return Response.status(Response.Status.CREATED)
+                .entity(document.getObjectId("_id").toHexString())
+                .type(MediaType.APPLICATION_JSON).build();
     }
     
+    @Path("/{ID}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response replace(String content) {
-        LOG.log(Level.INFO, ">>> replace():{0}", content.toString());
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("ID") String ID, Person person) 
+                                                 throws NotFoundException {
+        Document found = getCollection().find(
+                new Document().append("_id", new ObjectId(ID))).first();
+        if(found == null) throw new NotFoundException("ID "+ID+" not found");
         
-        try {
-            Document document = Document.parse(content);
-            
-            
-            
-        } catch(JSONParseException ex) {
-            LOG.log(Level.SEVERE, "### JSON PARSE EXCEPTION:{0}",
-                    ex.getMessage());
-            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
-        }
+        UpdateResult result = getCollection().updateOne(found, 
+                                    new Document("$set", person.toDocument()));
+        if(result.getModifiedCount() == 0)
+            return Response.status(Response.Status.GONE).build();
         
-        return Response.ok().build();
+        // Indicates nothing was modified at all
+        return Response.status(Response.Status.ACCEPTED).build();
     }
     
     @DELETE @Path("{ID}")
-    public Response delete(@PathParam("ID")String ID) {
-        LOG.log(Level.INFO, ">>> delete():{0}", ID);
+    public Response delete(@PathParam("ID")String ID) 
+            throws NotFoundException,
+               MongoWriteException, MongoWriteConcernException, MongoException {
+        Document found = fetchByObjectId(ID);
+        DeleteResult result = getCollection().deleteOne(found);
         
-        return Response.ok().build();
+        // Inidicate the content selected was deleted
+        if(result.getDeletedCount() == 0)
+            return Response.status(Response.Status.GONE).build();
+        
+        // Although the content was found, nothing was deleted
+        return Response.status(Response.Status.ACCEPTED).build();
+    }
+    
+    private Document fetchByObjectId(String ID) throws NotFoundException {
+        Document found = getCollection().find(
+                new Document().append("_id", new ObjectId(ID))).first();
+        if(found == null) throw new NotFoundException("ID: "+ID+" not found");
+        
+        return found;
     }
     
     private MongoCollection<Document> getCollection() {
-        LOG.log(Level.INFO, ">>> getCollection()");
-        MongoDatabase database = provider.getClient().getDatabase("myclass88");
-        return database.getCollection("persons");
+        return provider.getDatabase().getCollection(Person.COLLECTION_NAME);
     }
 }
