@@ -97,9 +97,7 @@ public class Resource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("ID") String ID, Person person) 
                                                  throws NotFoundException {
-        Document found = getCollection().find(
-                new Document().append("_id", new ObjectId(ID))).first();
-        if(found == null) throw new NotFoundException("ID "+ID+" not found");
+        Document found = fetchByObjectId(ID);
         
         UpdateResult result = getCollection().updateOne(found, 
                                     new Document("$set", person.toDocument()));
