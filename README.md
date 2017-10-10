@@ -18,14 +18,13 @@ using first and last name).
 ## UPDATE
 
 ## DELETE
-Call an API by the person's ID only
-
+Delete a Person by indicating your ID:
 
 ```
 curl -i -v -X DELETE http://<server>:<port>/helloworld/api/person/59dccb04e2016e1f64685181
 ```
-or
-```
+using Ansible
+```ansible
 ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/json" url="http://localhost:8080/helloworld/api/person/59dcd368e2016e1f64924705" status_code=202'
 ```
 
@@ -33,5 +32,5 @@ ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/j
 | ------------- | ------------- |
 | 202: Accepted  | The person was successfully deleted   |
 | 404: Not Found  | Unable to find Person's ID in the database  |
-| 410: Gone  | The was found but then, it ceases to exist and nothing was deleted (weird)  |
-| 503: Not Found  | Unable to find Person's ID in the database  |
+| 410: Gone  | A person was found but then, it ceases to exist and nothing was deleted (weird)  |
+| 503: Service Unavailable  | There was a problem in writing the contents into the database  |
