@@ -18,7 +18,7 @@ In order to create a single person, you will be submitting like this:
 curl -i -v -X POST -H "Content-type: application/json" http://localhost:8080/helloworld/api/person -d '{"firstName":"Mauricio","lastName":"Leal"}'
 ```
 
-using link:https://www.ansible.com/[Ansible]
+using [Ansible](https://www.ansible.com/)
 ```
 ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://localhost:8080/helloworld/api/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
 ```
