@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.notlam.research.exception;
+package net.nortlam.research.exception;
 
-import com.mongodb.MongoWriteException;
+import com.mongodb.MongoWriteConcernException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
@@ -14,18 +14,18 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * @return Code 503: Service Unavailable
- * 
  * @author Mauricio "Maltron" Leal <maltron at gmail dot com>
  */
 @Provider
-public class MongoWriteExceptionMapper implements ExceptionMapper<MongoWriteException> {
+public class MongoWriteConcernExceptionMapper implements ExceptionMapper<MongoWriteConcernException> {
 
-    private static final Logger LOG = Logger.getLogger(MongoWriteExceptionMapper.class.getName());
+    private static final Logger LOG = Logger.getLogger(MongoWriteConcernExceptionMapper.class.getName());
 
     @Override
-    public Response toResponse(MongoWriteException ex) {
-        LOG.log(Level.WARNING, "### MONGO WRITE EXCEPTION:{0}", ex.getMessage());
+    public Response toResponse(MongoWriteConcernException ex) {
+        LOG.log(Level.WARNING, "### MONGO WRITE CONCERN EXCEPTION:{0}", ex.getMessage());
         return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
     }
+
 
 }

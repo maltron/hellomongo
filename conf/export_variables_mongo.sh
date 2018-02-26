@@ -1,0 +1,1 @@
+export DB_SERVICE_HOSTNAME=localhost DB_SERVICE_PORT=27017 DB_USERNAME=mauricio DB_PASSWORD=maltron DB_DATABASE=sampledb

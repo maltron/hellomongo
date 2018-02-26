@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.notlam.research.exception;
+package net.nortlam.research.exception;
 
-import com.mongodb.MongoException;
+import com.mongodb.MongoWriteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
@@ -18,13 +18,14 @@ import javax.ws.rs.ext.Provider;
  * @author Mauricio "Maltron" Leal <maltron at gmail dot com>
  */
 @Provider
-public class MongoExceptionMapper implements ExceptionMapper<MongoException> {
+public class MongoWriteExceptionMapper implements ExceptionMapper<MongoWriteException> {
 
-    private static final Logger LOG = Logger.getLogger(MongoExceptionMapper.class.getName());
+    private static final Logger LOG = Logger.getLogger(MongoWriteExceptionMapper.class.getName());
 
     @Override
-    public Response toResponse(MongoException ex) {
-        LOG.log(Level.WARNING, "### MONGO EXCEPTION:{0}", ex.getMessage());
+    public Response toResponse(MongoWriteException ex) {
+        LOG.log(Level.WARNING, "### MONGO WRITE EXCEPTION:{0}", ex.getMessage());
         return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
     }
+
 }

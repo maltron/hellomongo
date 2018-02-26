@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package net.notlam.research.exception;
+package net.nortlam.research.exception;
 
 import java.util.logging.Logger;
 import javax.ws.rs.core.Response;

@@ -1,13 +1,16 @@
 package net.nortlam.research.setup;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
+import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -27,32 +30,56 @@ public class MongoProvider {
 
     private static final Logger LOG = Logger.getLogger(MongoProvider.class.getName());
     
-    public static final String MONGODB_HOST = "mongodb";
-    public static final int MONGODB_PORT = 27017;
-    public static final String MONGODB_DATABASE = "todai";
-    public static final String MONGODB_USERNAME = "todai";
-    public static final String MONGODB_PASSWORD = "todai";
-    
     private MongoClient client;
+    private String database;
     
     @PostConstruct
     private void init() {
-        LOG.log(Level.INFO, ">>> init() CONNECTING TO MONGO");
-        MongoCredential credential = MongoCredential.createCredential(
-                MONGODB_USERNAME, MONGODB_DATABASE, MONGODB_PASSWORD.toCharArray());
-        ServerAddress address = new ServerAddress(MONGODB_HOST, MONGODB_PORT);
-        client = new MongoClient(address, Arrays.asList(credential));
-        
-        // Create a Index specific for Collection: persons
-        getDatabase().getCollection(Person.COLLECTION_NAME)
-                .createIndex(Indexes.ascending(
-                        Person.TAG_FIRST_NAME, Person.TAG_LAST_NAME),
-                        new IndexOptions().unique(true));
+        LOG.log(Level.INFO, ">>> init() Connecting to Database");
+        try {
+            client = new MongoClient(serverAddress(), credentials(), MongoClientOptions.builder().build());
+        } catch(MongoException ex) {
+            LOG.log(Level.SEVERE, "### MongoDB: unable to connect: %s", ex.getMessage());
+        }
     }
     
-    @Lock(LockType.READ)
-    public MongoDatabase getDatabase() {
-        return client.getDatabase(MONGODB_USERNAME);
+    private ServerAddress serverAddress() {
+        String hostname = System.getenv("DB_SERVICE_HOSTNAME");
+        if(hostname == null) 
+            LOG.log(Level.SEVERE, "### MongoDB: variable DB_SERVICE_HOSTNAME is not set");
+        
+        String portString = System.getenv("DB_SERVICE_PORT");
+        if(portString == null)
+            LOG.log(Level.SEVERE, "### MongoDB: variable DB_SERVICE_PORT is not set");
+        
+        int port = 0;
+        try {
+            port = Integer.parseInt(portString);
+        } catch(NumberFormatException ex) {
+            LOG.log(Level.SEVERE, "### MongoDB: DB_SERVICE_PORT is not a integer");
+        }
+        
+        return new ServerAddress(hostname, port);
+    }
+    
+    private MongoCredential credentials() {
+        String username = System.getenv("DB_USERNAME");
+        if(username == null) 
+            LOG.log(Level.SEVERE, "### MongoDB: variable DB_USERNAME is not set");
+        
+        String password = System.getenv("DB_PASSWORD");
+        if(password == null) 
+            LOG.log(Level.SEVERE, "### MongoDB: variable DB_PASSWORD is not set");
+        
+        database = System.getenv("DB_DATABASE");
+        if(database == null)
+            LOG.log(Level.SEVERE, "### MongoDB: variable DB_DATABASE is not set");
+        
+        return MongoCredential.createCredential(username, database, password.toCharArray());
     }
 
+    @Lock(LockType.READ)
+    public MongoDatabase getDatabase() {
+        return client.getDatabase(database);
+    }    
 }

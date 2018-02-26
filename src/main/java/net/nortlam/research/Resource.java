@@ -26,7 +26,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.nortlam.research.setup.MongoProvider;
-import net.notlam.research.exception.NoContentException;
+import net.nortlam.research.exception.NoContentException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -40,7 +40,7 @@ public class Resource {
     
     @EJB
     private MongoProvider provider;
-    
+           
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response all() throws NoContentException {
