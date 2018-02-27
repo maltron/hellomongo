@@ -2,6 +2,7 @@ package net.nortlam.research.model;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,7 +12,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.nortlam.research.exception.InvalidException;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -113,9 +113,15 @@ public class Person implements Serializable {
     
     public JsonObject toJSON() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
+        if(this.ID != null) builder.add(TAG_ID, this.ID.toHexString());
         builder.add(TAG_FIRST_NAME, this.firstName);
         builder.add(TAG_LAST_NAME, this.lastName);
         
         return builder.build();
+    }
+    
+    @Override
+    public String toString() {
+        return toJSON().toString();
     }
 }
