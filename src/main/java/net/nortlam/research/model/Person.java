@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package net.nortlam.research;
+package net.nortlam.research.model;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,7 +10,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.nortlam.research.exception.InvalidException;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -27,7 +24,11 @@ public class Person implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(Person.class.getName());
     
-    public static final String COLLECTION_NAME = "persons";
+    public static final String COLLECTION_NAME = "people";
+    
+    public static final String TAG_ID = "_id";
+    @XmlElement(name = TAG_ID, nillable = true, required = false)
+    private ObjectId ID;    
     
     public static final String TAG_FIRST_NAME = "firstName";
     @XmlElement(name = TAG_FIRST_NAME, nillable = false, required = true, type = String.class)
@@ -45,11 +46,22 @@ public class Person implements Serializable {
         this.lastName = lastName;
     }
     
-    public Person(Document document) {
-        this.firstName = document.getString(TAG_FIRST_NAME);
-        this.lastName = document.getString(TAG_LAST_NAME);
+    public ObjectId getID() {
+        return ID;
     }
-
+    
+    public void setID(ObjectId ID) {
+        this.ID = ID;
+    }
+    
+    public void setID(String hexString) throws InvalidException {
+        if(hexString == null) throw new InvalidException("ID value is null");
+        if(!ObjectId.isValid(hexString))
+            throw new InvalidException("ID value is not valid: "+hexString);
+        
+        this.ID = new ObjectId(hexString);
+    }
+    
     public String getFirstName() {
         return firstName;
     }
@@ -69,6 +81,7 @@ public class Person implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.ID);
         hash = 17 * hash + Objects.hashCode(this.firstName);
         hash = 17 * hash + Objects.hashCode(this.lastName);
         return hash;
@@ -86,6 +99,9 @@ public class Person implements Serializable {
             return false;
         }
         final Person other = (Person) obj;
+        if (!Objects.equals(this.ID, other.ID)) {
+            return false;
+        }        
         if (!Objects.equals(this.firstName, other.firstName)) {
             return false;
         }
@@ -101,12 +117,5 @@ public class Person implements Serializable {
         builder.add(TAG_LAST_NAME, this.lastName);
         
         return builder.build();
-    }
-    
-    public Document toDocument() {
-        return new Document()
-                .append(TAG_FIRST_NAME, this.firstName)
-                .append(TAG_LAST_NAME, this.lastName);
-//        return Document.parse(toJSON().toString());
     }
 }

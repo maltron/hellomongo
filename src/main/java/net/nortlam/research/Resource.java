@@ -1,5 +1,6 @@
 package net.nortlam.research;
 
+import net.nortlam.research.model.Person;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteConcernException;
 import com.mongodb.MongoWriteException;
@@ -30,10 +31,13 @@ import net.nortlam.research.exception.NoContentException;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import static net.nortlam.research.convert.MongoConverter.fromDocument;
+import static net.nortlam.research.convert.MongoConverter.toDocument;
+
 /**
  *
  * @author Mauricio "Maltron" Leal <maltron@gmail.com> */
-@Path("/person")
+@Path("/v1/person")
 public class Resource {
 
     private static final Logger LOG = Logger.getLogger(Resource.class.getName());
@@ -49,7 +53,7 @@ public class Resource {
         Collection<Person> all = new ArrayList<>();
         for(Document document: getCollection().find().sort(
                 Sorts.ascending(Person.TAG_FIRST_NAME, Person.TAG_LAST_NAME)))
-            all.add(new Person(document));
+            all.add(fromDocument(document));
         
         GenericEntity<Collection<Person>> result = 
                 new GenericEntity<Collection<Person>>(all){};
@@ -77,8 +81,8 @@ public class Resource {
     public Response create(Person person) 
                 throws MongoWriteException, 
                         MongoWriteConcernException, MongoException {
-        Document document = person.toDocument();
-        getCollection().insertOne(document);
+        Document document = toDocument(person); // Convert Person Object into Document
+        getCollection().insertOne(document); 
         LOG.log(Level.INFO, ">>> create() {0}", document.toJson());
         LOG.log(Level.INFO, ">>> ObjectID: HEX:{0} String:{1}", new Object[] {
             document.getObjectId("_id").toString(),
@@ -100,7 +104,7 @@ public class Resource {
         Document found = fetchByObjectId(ID);
         
         UpdateResult result = getCollection().updateOne(found, 
-                                    new Document("$set", person.toDocument()));
+                                    new Document("$set", toDocument(person)));
         if(result.getModifiedCount() == 0)
             return Response.status(Response.Status.GONE).build();
         

@@ -61,7 +61,4 @@ ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/j
 
 | HTTP CODE  | Description |
 | ------------- | ------------- |
-| 202: Accepted  | The person was successfully deleted   |
-| 404: Not Found  | Unable to find Person's ID in the database  |
-| 410: Gone  | A person was found but then, it ceases to exist and nothing was deleted (weird)  |
-| 503: Service Unavailable  | There was a problem in writing the contents into the database  |
+| 500: Internal Server Error | There were some internal server error that prevented the service to be delivered such as database failure. Contact your administrator. |

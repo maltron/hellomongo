@@ -1,1 +1,2 @@
-curl -i -v -X GET -H "Content-type: application/json" http://customers-app-customers.cloudapps.testdrive.com/api/v1/customer
+selection="{.items[?(.metadata.name==\"${1}\")].spec.host}"
+curl -i -v -X GET http://$(oc get routes --output jsonpath=${selection})/api/v1/person
