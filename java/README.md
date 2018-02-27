@@ -62,7 +62,7 @@ $ curl/ping.sh hellomongo-app
 ```
 $ ansible localhost -m uri -a 'method=GET url=http://<ROUTE>/api/ping status_code=200'
 ```
-| Response HTTP Code        | Description |
+| HTTP Code Response | Description |
 | -----------------| ------------|
 | 200 - OK | The application is successfully running |
 
@@ -88,7 +88,7 @@ curl/post.sh hellomongo-app '{"firstName":"Mauricio","lastName":"Leal"}'
 ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://<ROUTE>/api/v1/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
 ```
 
-| Response HTTP Code        | Description |
+| HTTP Code Response    | Description |
 | -----------------| ------------|
 | 201 - Created | The content was successfully created and returned a new _id for this person like: 5a9569080c07d8004bc177b7 |
 | 503 - Service Unavailable | Unable to reach all the necessary services. A couple reasons could be: Something wrong with the database |
@@ -107,7 +107,7 @@ Using a simple script to fetch all data using OpenShift's Client
 curl/get_all.sh hellomongo-app
 ```
 
-| Response HTTP Code        | Description |
+| HTTP Code Response | Description |
 | -----------------| ------------|
 | 200 - Ok         | Return a array of all people included in the database |
 | 204 - No Content | There isn't any people in the database | 
@@ -127,7 +127,7 @@ $ ansible localhost -m uri -a 'method=GET headers="Accept=application/json" url=
 ```
 
 
-| Response HTTP Code        | Description                                    |
+| HTTP Code Response | Description                                    |
 | -----------------| -----------------------------------------------|
 | 200 - Ok         | Found a specific _id and returned the contents |
 | 404 - Not Found  | Unable to find a specific _id                  | 
@@ -148,7 +148,7 @@ $ curl/put.sh hellomongo-app 5a95245670cd4f004b8aad3e '{"firstName":"Mauricio", 
 ansible localhost -m uri -a 'method=PUT headers="Content-type=application/json" url=http://localhost:8080/api/v1/person/5a95245670cd4f004b8aad3e status_code=202 body="{\"firstName\":\"Mauricio\", \"lastName\":\"Leal\"}"'
 ```
 
-| Response HTTP Code        | Description                           |
+| HTTP Code Response | Description                           |
 | ------------------| -----------------------------------------------|
 | 202 - Accepted    | Found a specific _id and updated its contents     |
 | 400 - Bad Request | There was some missing information in the request | 
@@ -172,7 +172,7 @@ $ curl/delete.sh hellomongo-app 59dccb04e2016e1f64685181
 $ ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/json" url="http://<ROUTE>/api/v1/person/59dcd368e2016e1f64924705" status_code=202'
 ```
 
-| Response HTTP CODE  | Description |
+| HTTP Code Response | Description |
 | ------------- | ------------- |
 | 202 - Accepted  | Found the content and it was successfully deleted |
 | 401 - Gone      | There is nothing to delete |
