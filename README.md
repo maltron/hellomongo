@@ -113,11 +113,24 @@ $ ansible localhost -m uri -a 'method=GET headers="Accept=application/json" url=
 
 using curl
 ```
-curl -i -v -X PUT -H "Content-type: application/json" http://localhost:8080/helloworld/api/person/59d9ae6ed30f7d11dde34c59 -d '{"firstName":"Andre","lastName":"Silva"}'
+curl -i -v -X PUT -H "Content-type: application/json" http://<ROUTE>/api/v1/person/59d9ae6ed30f7d11dde34c59 -d '{"firstName":"Andre","lastName":"Silva"}'
 ```
-using Ansible
+or using the following script, helps to submit the content directly
 ```
+$ curl/put.sh hellomongo-app 5a95245670cd4f004b8aad3e '{"firstName":"Mauricio", "lastName":"Leal"}'
 ```
+
+[Ansible Version](https://www.ansible.com/)
+```
+ansible localhost -m uri -a 'method=PUT headers="Content-type=application/json" url=http://localhost:8080/api/v1/person/5a95245670cd4f004b8aad3e status_code=202 body="{\"firstName\":\"Mauricio\", \"lastName\":\"Leal\"}"'
+```
+
+| Response HTTP Code        | Description                           |
+| ------------------| -----------------------------------------------|
+| 202 - Accepted    | Found a specific _id and updated its contents     |
+| 400 - Bad Request | There was some missing information in the request | 
+| 401 - Gone        | Nothing to update                                 | 
+| 404 - Not Found   | Unable to find a specific _id                  | 
 
 
 ## DELETE
