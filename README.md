@@ -27,8 +27,11 @@ ansible localhost -m uri -a 'method=POST headers="Content-type=application/json"
 If you just type submit straight to the service "/person", 
 you will get a list of all People in the database
 ```
-curl -i -v -X GET http://localhost:8080/helloworld/api/person
+curl -i -v -X GET http://<ROUTE>/api/v1/person
 ```
+| HTTP Code | Description | CURL Example |
+| 200 | Return a array of all the contents | curl -i -v -X GET http://hellomongo.cloudapps.example.com/api/v1/person |
+
 
 However, if you indicated a specific ID, you will get the a specific information
 from a person
