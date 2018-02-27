@@ -7,7 +7,7 @@
     <version>2.0</version>
     <packaging>war</packaging>
 
-    <name>helloworld</name>
+    <name>HelloWorld</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -83,5 +83,6 @@
             </plugin>
         </plugins>
     </build>
-
+    <description>This simple application creates a set of API's which it's going to store some information about a single Person (using first and last name only).
+The sole purpose of this application is to provide a base for other applications further on. </description>
 </project>
