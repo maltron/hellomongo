@@ -30,6 +30,7 @@ you will get a list of all People in the database
 curl -i -v -X GET http://<ROUTE>/api/v1/person
 ```
 | HTTP Code | Description | CURL Example |
+| ----------| ------------|------------  |
 | 200 | Return a array of all the contents | curl -i -v -X GET http://hellomongo.cloudapps.example.com/api/v1/person |
 
 
