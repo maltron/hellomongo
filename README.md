@@ -68,7 +68,7 @@ $ ansible localhost -m uri -a 'method=GET url=http://<ROUTE>/api/ping status_cod
 
 With that, you can set a [Readiness probe](https://docs.openshift.com/container-platform/3.7/dev_guide/application_health.html#container-health-checks-using-probes) into the Pod to make sure the application is alive and well
 ```
-$ oc set probe dc/hellomongo-app --readiness --get-url=http://:8080/api/ping
+$ oc set probe dc/hellomongo-app --readiness --initial-delay-seconds=20 --period-seconds=15 --get-url=http://:8080/api/ping
 ```
 
 ## CREATE
