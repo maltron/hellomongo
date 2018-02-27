@@ -33,6 +33,7 @@ import org.bson.types.ObjectId;
 
 import static net.nortlam.research.convert.MongoConverter.fromDocument;
 import static net.nortlam.research.convert.MongoConverter.toDocument;
+import net.nortlam.research.exception.MissingInformationException;
 
 /**
  *
@@ -70,9 +71,9 @@ public class Resource {
         LOG.log(Level.INFO, ">>> fetchByID() {0}", found);
         
         if(found == null) 
-            throw new NotFoundException("ID "+ID+" not found");
+            throw new NotFoundException("_ID "+ID+" not found");
         
-        return Response.ok(found.toJson(), MediaType.APPLICATION_JSON).build();
+        return Response.ok(fromDocument(found), MediaType.APPLICATION_JSON).build();
     }
     
     @POST
@@ -100,7 +101,11 @@ public class Resource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("ID") String ID, Person person) 
-                                                 throws NotFoundException {
+                         throws NotFoundException, MissingInformationException {
+        // Is there any Person to work with ?
+        if(person == null) 
+            throw new MissingInformationException("No Person were found");
+        
         Document found = fetchByObjectId(ID);
         
         UpdateResult result = getCollection().updateOne(found, 
