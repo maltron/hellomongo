@@ -48,6 +48,25 @@ hellomongo.cloudapps.nortlam.net
 This will get a list of routes, select whoever has the **.metadata.name=="hellomongo-app"** and return the value of **.spec.host**
 There are a few scripts which uses this technique to get the route information and submit content directly to the service using [curl command](http://www.mit.edu/afs.new/sipb/user/ssen/src/curl-7.11.1/docs/curl.html)
 
+# PING
+There is a simple endpoint, which helps to know if the application is up and running
+```
+$ curl -i -v -X GET http://localhost:8080/api/ping
+```
+or running the following script, which gives your the same information
+```
+$ curl/ping.sh hellomongo-app
+```
+
+[Ansible version](https://www.ansible.com/)
+```
+$ ansible localhost -m uri -a 'method=GET url=http://localhost:8080/api/ping status_code=200'
+```
+| Response HTTP Code        | Description |
+| -----------------| ------------|
+| 200 - OK | The application is successfully running |
+
+
 ## CREATE
 In order to create a single person, you will be submitting like this:
 
@@ -60,7 +79,7 @@ Using a simple script to fetch all data using OpenShift's Client
 curl/post.sh hellomongo-app '{"firstName":"Mauricio","lastName":"Leal"}'
 ```
 
-using [Ansible](https://www.ansible.com/)
+[Ansible version](https://www.ansible.com/)
 ```
 ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://localhost:8080/helloworld/api/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
 ```
@@ -134,16 +153,24 @@ ansible localhost -m uri -a 'method=PUT headers="Content-type=application/json" 
 
 
 ## DELETE
-Delete a Person by indicating your ID (for example, using ID 59dccb04e2016e1f64685181)
+Delete a Person by indicating your _id (for example, using _id 59dccb04e2016e1f64685181)
 
 ```
-curl -i -v -X DELETE http://<server>:<port>/helloworld/api/person/59dccb04e2016e1f64685181
+$ curl -i -v -X DELETE http://<ROUTE>/api/v1/person/59dccb04e2016e1f64685181
 ```
-using Ansible
+or using the following script, helps to submit the content directly
 ```
-ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/json" url="http://<server>:<port>/helloworld/api/person/59dcd368e2016e1f64924705" status_code=202'
+$ curl/delete.sh hellomongo-app 59dccb04e2016e1f64685181
+```
+
+[Ansible Version](https://www.ansible.com/)
+```
+$ ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/json" url="http://<ROUTE>/api/v1/person/59dcd368e2016e1f64924705" status_code=202'
 ```
 
 | Response HTTP CODE  | Description |
 | ------------- | ------------- |
-| 500: Internal Server Error | There were some internal server error that prevented the service to be delivered such as database failure. Contact your administrator. |
+| 202 - Accepted  | Found the content and it was successfully deleted |
+| 401 - Gone      | There is nothing to delete |
+| 404 - Not Found | Unable to find this particular _id |
+| 503 - Service Unavailable | Unable to perform a operation  |
