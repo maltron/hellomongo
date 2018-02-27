@@ -65,7 +65,7 @@ Responses codes are the following:
 
 
 ## READ 
-If you just type submit straight to the service "/v1/person", you will get a list of all People in the database
+If you just type submit straight to the service "/api/v1/person", you will get a list of all People from the database
 ```
 curl -i -v -X GET http://<ROUTE>/api/v1/person
 ```
@@ -79,6 +79,7 @@ curl/get_all.sh hellomongo-app
 ```
 
 Responses codes are the following:
+
 | HTTP Code        | Description |
 | -----------------| ------------|
 | 200 - Ok         | Return a array of all people included in the database |
@@ -98,6 +99,7 @@ $ curl/get.sh hellomongo-app 5a95245670cd4f004b8aad3e
 $ ansible localhost -m uri -a 'method=GET headers="Accept=application/json" url=http://hellomongo.cloudapps.nortlam.net/api/v1/person/5a95245670cd4f004b8aad3e status_code=200'
 ```
 Responses codes are the following:
+
 | HTTP Code        | Description                                    |
 | -----------------| -----------------------------------------------|
 | 200 - Ok         | Found a specific _id and returned the contents |
