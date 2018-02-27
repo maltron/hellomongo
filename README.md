@@ -29,9 +29,22 @@ you will get a list of all People in the database
 ```
 curl -i -v -X GET http://<ROUTE>/api/v1/person
 ```
-| HTTP Code | Description | CURL Example |
-| ----------| ------------|------------  |
-| 200 | Return a array of all the contents | curl -i -v -X GET http://hellomongo.cloudapps.example.com/api/v1/person |
+[Ansible Version](https://www.ansible.com/)
+```
+ansible localhost -m uri -a 'method=GET url=http://hellomongo.cloudapps.nortlam.net/api/v1/person'
+```
+
+
+There is a simple using OpenShift's Client Command to fetch the content. You can try by running:
+```
+curl/get_all.sh hell
+```
+
+
+| HTTP Code        | Description |
+| -----------------| ------------|
+| 200 - Ok         | Return a array of all people included in the database |
+| 204 - No Content | There any anybody in the database | 
 
 
 However, if you indicated a specific ID, you will get the a specific information
