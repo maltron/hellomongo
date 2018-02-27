@@ -51,7 +51,7 @@ There are a few scripts which uses this technique to get the route information a
 # PING
 There is a simple endpoint, which helps to know if the application is up and running
 ```
-$ curl -i -v -X GET http://localhost:8080/api/ping
+$ curl -i -v -X GET http://<ROUTE>/api/ping
 ```
 or running the following script, which gives your the same information
 ```
@@ -60,12 +60,16 @@ $ curl/ping.sh hellomongo-app
 
 [Ansible version](https://www.ansible.com/)
 ```
-$ ansible localhost -m uri -a 'method=GET url=http://localhost:8080/api/ping status_code=200'
+$ ansible localhost -m uri -a 'method=GET url=http://<ROUTE>/api/ping status_code=200'
 ```
 | Response HTTP Code        | Description |
 | -----------------| ------------|
 | 200 - OK | The application is successfully running |
 
+With that, you can set a [Readiness probe](https://docs.openshift.com/container-platform/3.7/dev_guide/application_health.html#container-health-checks-using-probes) into the Pod to make sure the application is alive and well
+```
+$ oc set probe dc/hellomongo-app --readiness --get-url=http://:8080/api/ping
+```
 
 ## CREATE
 In order to create a single person, you will be submitting like this:
@@ -81,7 +85,7 @@ curl/post.sh hellomongo-app '{"firstName":"Mauricio","lastName":"Leal"}'
 
 [Ansible version](https://www.ansible.com/)
 ```
-ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://localhost:8080/helloworld/api/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
+ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://<ROUTE>/api/v1/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
 ```
 
 | Response HTTP Code        | Description |
