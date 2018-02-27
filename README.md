@@ -78,9 +78,8 @@ Using a simple script to fetch all data using OpenShift's Client
 curl/get_all.sh hellomongo-app
 ```
 
-Responses codes are the following:
 
-| HTTP Code        | Description |
+| Response HTTP Code        | Description |
 | -----------------| ------------|
 | 200 - Ok         | Return a array of all people included in the database |
 | 204 - No Content | There isn't any people in the database | 
