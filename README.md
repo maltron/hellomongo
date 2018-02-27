@@ -12,7 +12,7 @@ Bellow, are some of the calls you can use in order to add names (more specifical
 using first and last name).
 
 This application can be run on [Red Hat OpenShift Container Platform](https://www.openshift.com).
-Let's assume that both of your project has the following characteristics:
+Let's assume that your project has the following characteristics:
 
 ```
 $ oc status
@@ -52,13 +52,17 @@ There are a few scripts which uses this technique to get the route information a
 In order to create a single person, you will be submitting like this:
 
 ```
-curl -i -v -X POST -H "Content-type: application/json" http://localhost:8080/helloworld/api/person -d '{"firstName":"Mauricio","lastName":"Leal"}'
+curl -i -v -X POST -H "Content-type: application/json" http://<ROUTE>/api/v1/person -d '{"firstName":"Mauricio","lastName":"Leal"}'
 ```
 
 using [Ansible](https://www.ansible.com/)
 ```
 ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://localhost:8080/helloworld/api/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
 ```
+Responses codes are the following:
+| HTTP Code        | Description |
+| -----------------| ------------|
+
 
 ## READ 
 If you just type submit straight to the service "/v1/person", you will get a list of all People in the database
@@ -74,19 +78,30 @@ Using a simple script to fetch all data using OpenShift's Client
 curl/get_all.sh hellomongo-app
 ```
 
-
+Responses codes are the following:
 | HTTP Code        | Description |
 | -----------------| ------------|
 | 200 - Ok         | Return a array of all people included in the database |
 | 204 - No Content | There isn't any people in the database | 
 
 
-However, if you indicated a specific ID, you will get the a specific information
-from a person
+You can always fetch for a particular person, given his _id as such
 ```
-curl -i -v -X GET http://localhost:8080/helloworld/api/person/59dd2435e2016e1f644e8404
+curl -i -v -X GET -H "Accept: application/json" http://hellomongo.cloudapps.nortlam.net/api/v1/person/5a95245670cd4f004b8aad3e
 ```
-
+or running the following script, which gives your the same information
+```
+$ curl/get.sh hellomongo-app 5a95245670cd4f004b8aad3e
+```
+[Ansible Version](https://www.ansible.com/)
+```
+$ ansible localhost -m uri -a 'method=GET headers="Accept=application/json" url=http://hellomongo.cloudapps.nortlam.net/api/v1/person/5a95245670cd4f004b8aad3e status_code=200'
+```
+Responses codes are the following:
+| HTTP Code        | Description |
+| -----------------| ------------|
+| 200 - Ok         | Found a specific _id and returned the contents |
+| 404 - Not Found | Unable to find a specific _id | 
 
 ## UPDATE
 
