@@ -55,14 +55,20 @@ In order to create a single person, you will be submitting like this:
 curl -i -v -X POST -H "Content-type: application/json" http://<ROUTE>/api/v1/person -d '{"firstName":"Mauricio","lastName":"Leal"}'
 ```
 
+Using a simple script to fetch all data using OpenShift's Client
+```
+curl/post.sh hellomongo-app '{"firstName":"Mauricio","lastName":"Leal"}'
+```
+
 using [Ansible](https://www.ansible.com/)
 ```
 ansible localhost -m uri -a 'method=POST headers="Content-type=application/json" status_code=201 return_content=true url="http://localhost:8080/helloworld/api/person" body="{\"firstName\":\"John\",\"lastName\":\"Doe\"}"'
 ```
-Responses codes are the following:
-| HTTP Code        | Description |
-| -----------------| ------------|
 
+| Response HTTP Code        | Description |
+| -----------------| ------------|
+| 201 - Created | The content was successfully created and returned a new _id for this person like: 5a9569080c07d8004bc177b7 |
+| 503 - Service Unavailable | Unable to reach all the necessary services. A couple reasons could be: Something wrong with the database |
 
 ## READ 
 If you just type submit straight to the service "/api/v1/person", you will get a list of all People from the database
@@ -77,7 +83,6 @@ Using a simple script to fetch all data using OpenShift's Client
 ```
 curl/get_all.sh hellomongo-app
 ```
-
 
 | Response HTTP Code        | Description |
 | -----------------| ------------|
@@ -97,9 +102,9 @@ $ curl/get.sh hellomongo-app 5a95245670cd4f004b8aad3e
 ```
 $ ansible localhost -m uri -a 'method=GET headers="Accept=application/json" url=http://hellomongo.cloudapps.nortlam.net/api/v1/person/5a95245670cd4f004b8aad3e status_code=200'
 ```
-Responses codes are the following:
 
-| HTTP Code        | Description                                    |
+
+| Response HTTP Code        | Description                                    |
 | -----------------| -----------------------------------------------|
 | 200 - Ok         | Found a specific _id and returned the contents |
 | 404 - Not Found  | Unable to find a specific _id                  | 
@@ -126,6 +131,6 @@ using Ansible
 ansible localhost -m uri -a 'method="DELETE" headers="Content-type=application/json" url="http://<server>:<port>/helloworld/api/person/59dcd368e2016e1f64924705" status_code=202'
 ```
 
-| HTTP CODE  | Description |
+| Response HTTP CODE  | Description |
 | ------------- | ------------- |
 | 500: Internal Server Error | There were some internal server error that prevented the service to be delivered such as database failure. Contact your administrator. |
