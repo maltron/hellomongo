@@ -17,9 +17,11 @@ extension PeopleViewController {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true),
                     NSSortDescriptor(key: "lastName", ascending: true)]
         
+        // Step 2: Create a NSFetchedResultsController instance and attach to a delegate
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
         
+        // Step 3: Perform Fetch
         do {
             try fetchedResultsController.performFetch()
         } catch let performErr {

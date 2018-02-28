@@ -51,12 +51,30 @@ class PeopleViewController: UITableViewController, NSFetchedResultsControllerDel
         navigationController?.pushViewController(personViewController, animated: true)
     }
     
+    // Delegate PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA
+    //  PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA
     func create(_ firstName: String, _ lastName: String) {
-            
+        let context: NSManagedObjectContext = persistentContainer.viewContext
+        let entity: NSEntityDescription = NSEntityDescription.entity(forEntityName: "Person", in: context)!
+        let newPerson: Person = Person(entity: entity, insertInto: context)
+        newPerson.firstName = firstName
+        newPerson.lastName = lastName
+        
+        do {
+            try context.save()
+        } catch let createErr {
+            print("### create(_:_) UNABLE TO SAVE DATA:", createErr)
+        }
     }
     
     func update(_ person: Person) {
+        let context: NSManagedObjectContext = persistentContainer.viewContext
         
+        do {
+            try context.save()
+        } catch let updateErr {
+            print("### update(_:_) UNABEL TO SAVE DATA:", updateErr)
+        }
     }
 
 }
