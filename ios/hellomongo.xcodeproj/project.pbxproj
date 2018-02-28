@@ -8,18 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		22703CA62045CF8C00E75715 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22703CA52045CF8C00E75715 /* AppDelegate.swift */; };
-		22703CA82045CF8C00E75715 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22703CA72045CF8C00E75715 /* ViewController.swift */; };
+		22703CA82045CF8C00E75715 /* PeopleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22703CA72045CF8C00E75715 /* PeopleViewController.swift */; };
 		22703CAD2045CF8C00E75715 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22703CAC2045CF8C00E75715 /* Assets.xcassets */; };
 		22703CB02045CF8C00E75715 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22703CAE2045CF8C00E75715 /* LaunchScreen.storyboard */; };
+		22E960362045DA23007DF6FA /* PersonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E960352045DA23007DF6FA /* PersonViewController.swift */; };
+		22E960392046ED77007DF6FA /* People.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 22E960372046ED77007DF6FA /* People.xcdatamodeld */; };
+		22E9603C2046F224007DF6FA /* PeopleViewController+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E9603B2046F224007DF6FA /* PeopleViewController+CoreData.swift */; };
+		22E9603E2046F5CB007DF6FA /* PeopleViewController+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E9603D2046F5CB007DF6FA /* PeopleViewController+TableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		22703CA22045CF8C00E75715 /* hellomongo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hellomongo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22703CA52045CF8C00E75715 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		22703CA72045CF8C00E75715 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		22703CA72045CF8C00E75715 /* PeopleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleViewController.swift; sourceTree = "<group>"; };
 		22703CAC2045CF8C00E75715 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		22703CAF2045CF8C00E75715 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		22703CB12045CF8C00E75715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22E960352045DA23007DF6FA /* PersonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonViewController.swift; sourceTree = "<group>"; };
+		22E960382046ED77007DF6FA /* People.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = People.xcdatamodel; sourceTree = "<group>"; };
+		22E9603B2046F224007DF6FA /* PeopleViewController+CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeopleViewController+CoreData.swift"; sourceTree = "<group>"; };
+		22E9603D2046F5CB007DF6FA /* PeopleViewController+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeopleViewController+TableView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,13 +60,41 @@
 		22703CA42045CF8C00E75715 /* hellomongo */ = {
 			isa = PBXGroup;
 			children = (
+				22E9603A2046EE06007DF6FA /* person */,
+				22E960342045D9F8007DF6FA /* tableview */,
+				22E960332045D9EE007DF6FA /* coredata */,
 				22703CA52045CF8C00E75715 /* AppDelegate.swift */,
-				22703CA72045CF8C00E75715 /* ViewController.swift */,
+				22703CA72045CF8C00E75715 /* PeopleViewController.swift */,
 				22703CAC2045CF8C00E75715 /* Assets.xcassets */,
 				22703CAE2045CF8C00E75715 /* LaunchScreen.storyboard */,
 				22703CB12045CF8C00E75715 /* Info.plist */,
 			);
 			path = hellomongo;
+			sourceTree = "<group>";
+		};
+		22E960332045D9EE007DF6FA /* coredata */ = {
+			isa = PBXGroup;
+			children = (
+				22E960372046ED77007DF6FA /* People.xcdatamodeld */,
+				22E9603B2046F224007DF6FA /* PeopleViewController+CoreData.swift */,
+			);
+			path = coredata;
+			sourceTree = "<group>";
+		};
+		22E960342045D9F8007DF6FA /* tableview */ = {
+			isa = PBXGroup;
+			children = (
+				22E9603D2046F5CB007DF6FA /* PeopleViewController+TableView.swift */,
+			);
+			path = tableview;
+			sourceTree = "<group>";
+		};
+		22E9603A2046EE06007DF6FA /* person */ = {
+			isa = PBXGroup;
+			children = (
+				22E960352045DA23007DF6FA /* PersonViewController.swift */,
+			);
+			path = person;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,8 +168,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22703CA82045CF8C00E75715 /* ViewController.swift in Sources */,
+				22E960392046ED77007DF6FA /* People.xcdatamodeld in Sources */,
+				22E9603E2046F5CB007DF6FA /* PeopleViewController+TableView.swift in Sources */,
+				22703CA82045CF8C00E75715 /* PeopleViewController.swift in Sources */,
+				22E960362045DA23007DF6FA /* PersonViewController.swift in Sources */,
 				22703CA62045CF8C00E75715 /* AppDelegate.swift in Sources */,
+				22E9603C2046F224007DF6FA /* PeopleViewController+CoreData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +348,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		22E960372046ED77007DF6FA /* People.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				22E960382046ED77007DF6FA /* People.xcdatamodel */,
+			);
+			currentVersion = 22E960382046ED77007DF6FA /* People.xcdatamodel */;
+			path = People.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 22703C9A2045CF8C00E75715 /* Project object */;
 }
