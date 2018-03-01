@@ -18,7 +18,7 @@ public class PingResource implements Serializable {
 
     @GET
     public Response ping() {
-        LOG.log(Level.INFO, ">>> PingResource.ping()");
+//        LOG.log(Level.INFO, ">>> PingResource.ping()");
         return Response.ok().build();
     }
     
