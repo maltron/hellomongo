@@ -14,6 +14,11 @@ protocol PeopleCoreDataDelegate {
     func update(_ person: Person)
 }
 
+class PersonResult: Codable {
+    var firstName: String
+    var lastName: String
+}
+
 class PeopleViewController: UITableViewController, NSFetchedResultsControllerDelegate, PeopleCoreDataDelegate {
     
     lazy var persistentContainer: NSPersistentContainer = {
@@ -28,9 +33,49 @@ class PeopleViewController: UITableViewController, NSFetchedResultsControllerDel
     }()
     
     var fetchedResultsController: NSFetchedResultsController<Person>!
+    
+    // TEST TEST TEST TEST TEST TEST
+    @objc func handleTest() {
+        
+        let url: URL = URL(string: "http://hellomongo-app-hellomongo.cloudapps.maltron.solutionarchitectsredhat.com.br/api/v1/person")!
+        
+        if let json: Data = performRequest(url: url) {
+            do {
+                let decoder = JSONDecoder()
+                let result = try decoder.decode([PersonResult].self, from: json)
+                for personResult in result {
+                    print(">>> \(personResult.firstName) \(personResult.lastName)")
+                }
+            } catch let decodeErr {
+                print("### handleTest() UNABLE TO DECODE:", decodeErr)
+            }
+        }
+        
+        
+    }
+    
+    private func performRequest(url: URL) -> Data? {
+        do {
+            return try Data(contentsOf: url)
+        } catch let performErr {
+            print("### performRequest() UNABLE TO FETCH:", performErr)
+        }
+        
+        return nil
+    }
+    
+    private func showNetworkError() {
+        let alert = UIAlertController(title: "Whoops...", message: "There was an error accessing the iTunes Store", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // TESTING SUBMIT
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "TEST", style: .plain, target: self, action: #selector(handleTest))
         
         // Setup Navigation
         navigationItem.title = "People"
