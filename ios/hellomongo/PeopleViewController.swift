@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  PeopleViewController
 //  hellomongo
 //
 //  Created by Mauricio Leal on 2/27/18.
@@ -12,14 +12,12 @@ import CoreData
 protocol PeopleCoreDataDelegate {
     func create(_ firstName: String, _ lastName: String)
     func update(_ person: Person)
-}
-
-class PersonResult: Codable {
-    var firstName: String
-    var lastName: String
+    func delete(_ person: Person)
 }
 
 class PeopleViewController: UITableViewController, NSFetchedResultsControllerDelegate, PeopleCoreDataDelegate {
+    
+    let serverURL: URL? = URL(string: "http://hellomongo-app-hellomongo.cloudapps.maltron.solutionarchitectsredhat.com.br")
     
     lazy var persistentContainer: NSPersistentContainer = {
         let container: NSPersistentContainer = NSPersistentContainer(name: "People")
@@ -33,105 +31,10 @@ class PeopleViewController: UITableViewController, NSFetchedResultsControllerDel
     }()
     
     var fetchedResultsController: NSFetchedResultsController<Person>!
-    
     var dataTask: URLSessionDataTask!
     
-    // TEST TEST TEST TEST TEST TEST
-    @objc func handleTest() {
-        
-        navigationItem.leftBarButtonItem?.isEnabled = false
-        navigationItem.rightBarButtonItem?.isEnabled = false
-        
-//        let queue = DispatchQueue.global()
-//        queue.async {
-            // Step 1/5: Create a URL object just like before
-            let url: URL = URL(string: "http://hellomongo.cloudapps.nortlam.net/api/v1/person")!
-            // Step 2/5 Get a shared URLSession, using default configuration
-            //          with respect to caching, cookies, and other web stuff
-            let session: URLSession = URLSession.shared
-            // Step 3/5 Data Tasks are for fetching the contents of a given URL
-            //          the code form the completion handler will be invoked when the data
-            //          has received a response from the server
-            dataTask = session.dataTask(with: url, completionHandler: { (data, response, error) in
-                print("On main thread ? " + (Thread.current.isMainThread ? "Yes" : "No"))
-                
-                // Step 4/5 data, response and error are all optionals.
-                //          if error is nil, the communication with the server succeeded
-                //          response holds the server's response code and headers
-                //          data contain the actual data fetched from the server
-                if let _ = error {
-                    //print("FAILURE! \(error)")
-                    DispatchQueue.main.async {
-                        self.showNetworkError()
-                    }
-                } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                    print("SUCCESS!")
-                    if let json: Data = data {
-                        do {
-                            let decoder: JSONDecoder = JSONDecoder()
-                            let result: [PersonResult] = try decoder.decode([PersonResult].self, from: json)
-                            for personResult in result {
-                                print(">>> \(personResult.firstName) \(personResult.lastName)")
-                            }
-                        } catch let decodeErr {
-                            print("### DECODING FAILED:", decodeErr)
-                        }
-                    }
-                }
-                
-                DispatchQueue.main.async {
-                    self.navigationItem.leftBarButtonItem?.isEnabled = true
-                    self.navigationItem.rightBarButtonItem?.isEnabled = true
-                }
-                
-            })
-        
-        // Step 5/5 Once you created data task, you call resume to start it
-        //          This sends the request to the server on a background thread
-        //
-            dataTask.resume()
-            
-//            if let json: Data = self.performRequest(url: url) {
-//                do {
-//                    let decoder = JSONDecoder()
-//                    let result = try decoder.decode([PersonResult].self, from: json)
-//                    for personResult in result {
-//                        print(">>> \(personResult.firstName) \(personResult.lastName)")
-//                    }
-//                } catch let decodeErr {
-//                    print("### handleTest() UNABLE TO DECODE:", decodeErr)
-//                }
-//            }
-            
-//            DispatchQueue.main.async {
-//                self.navigationItem.leftBarButtonItem?.isEnabled = true
-//                self.navigationItem.rightBarButtonItem?.isEnabled = true
-//            }
-//        }
-    }
-    
-//    private func performRequest(url: URL) -> Data? {
-//        do {
-//            return try Data(contentsOf: url)
-//        } catch let performErr {
-//            print("### performRequest() UNABLE TO FETCH:", performErr)
-//        }
-//
-//        return nil
-//    }
-    
-    private func showNetworkError() {
-        let alert = UIAlertController(title: "Whoops...", message: "There was an error accessing the iTunes Store", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Ok", style: .default, handler: nil)
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // TESTING SUBMIT
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "TEST", style: .plain, target: self, action: #selector(handleTest))
         
         // Setup Navigation
         navigationItem.title = "People"
@@ -155,9 +58,42 @@ class PeopleViewController: UITableViewController, NSFetchedResultsControllerDel
     // Delegate PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA
     //  PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA PEOPLE COREDATA
     func create(_ firstName: String, _ lastName: String) {
+        print(">>> create() \(firstName) \(lastName)")
+        // The data will be persisted only when there is confirmed response from server
+        dataTask?.cancel()
+        
+        var request: URLRequest = URLRequest(url: URL(string: "/api/v1/person", relativeTo: serverURL!)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.httpBody = toJSON(id: nil, firstName: firstName, lastName: lastName)
+
+        dataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            if let _ = error {
+                DispatchQueue.main.async {
+                    // Network Failure
+                    self.showNetworkFailure()
+                }
+                
+            } else if let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 201,
+                let data = data, let result = String(data: data, encoding: .utf8) {
+                DispatchQueue.main.async {
+                    self.networkingBusy(status: false)
+                    // Success: Code 201
+                    self.coredataCreate(result, firstName, lastName)
+                }
+            }
+        })
+        networkingBusy(status: true)
+        dataTask?.resume()
+    }
+    
+    private func coredataCreate(_ id: String, _ firstName: String, _ lastName: String) {
         let context: NSManagedObjectContext = persistentContainer.viewContext
         let entity: NSEntityDescription = NSEntityDescription.entity(forEntityName: "Person", in: context)!
         let newPerson: Person = Person(entity: entity, insertInto: context)
+        newPerson.id = id
         newPerson.firstName = firstName
         newPerson.lastName = lastName
         
@@ -169,6 +105,36 @@ class PeopleViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     func update(_ person: Person) {
+        guard let id = person.id, let url = URL(string: "/api/v1/person/\(id)", relativeTo: serverURL) else {
+            return
+        }
+        
+        var request: URLRequest = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.httpBody = toJSON(person: person)
+        
+        dataTask?.cancel()
+        dataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            if let _ = error {
+                // Network Failure
+                DispatchQueue.main.async {
+                    self.showNetworkFailure()
+                }
+
+            } else if let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 202 { // 202: Accepted
+                DispatchQueue.main.async {
+                    self.networkingBusy(status: false)
+                    self.coredataUpdate(person)
+                }
+            }
+        })
+        dataTask?.resume()
+    }
+    
+    private func coredataUpdate(_ person: Person) {
         let context: NSManagedObjectContext = persistentContainer.viewContext
         
         do {
@@ -177,6 +143,30 @@ class PeopleViewController: UITableViewController, NSFetchedResultsControllerDel
             print("### update(_:_) UNABEL TO SAVE DATA:", updateErr)
         }
     }
-
+    
+    func delete(_ person: Person) {
+        guard let id = person.id, let url = URL(string: "/api/v1/person/\(id)", relativeTo: serverURL)  else {
+            return
+        }
+        
+        var request: URLRequest = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        dataTask?.cancel()
+        dataTask = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            if let _ = error {
+                // Network Failure
+                DispatchQueue.main.async {
+                    self.showNetworkFailure()
+                }
+            } else if let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 202 { // 202: Accepted
+                DispatchQueue.main.async {
+                    self.networkingBusy(status: false)
+                }
+            }
+        })
+        dataTask?.resume()
+    }
 }
 

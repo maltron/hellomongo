@@ -30,15 +30,10 @@ extension PeopleViewController {
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let deleteAction: UITableViewRowAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, indexPath) in
-            let context: NSManagedObjectContext = self.persistentContainer.viewContext
             let person: Person = self.fetchedResultsController.object(at: indexPath)
             
-            context.delete(person)
-            do {
-                try context.save()
-            } catch let deleteErr {
-                print("### tableView(_,editActionsForRowAt:) UNABLE TO DELETE DATA:", deleteErr)
-            }
+            self.persistentContainer.viewContext.delete(person)
+            self.delete(person)
         }
         
         return [deleteAction]

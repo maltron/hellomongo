@@ -12,6 +12,7 @@
 		22703CAD2045CF8C00E75715 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22703CAC2045CF8C00E75715 /* Assets.xcassets */; };
 		22703CB02045CF8C00E75715 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22703CAE2045CF8C00E75715 /* LaunchScreen.storyboard */; };
 		228BBB1B2047262F002F97F9 /* PersonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228BBB1A2047262F002F97F9 /* PersonCell.swift */; };
+		228BBB1E2049AE35002F97F9 /* PeopleViewController+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228BBB1D2049AE35002F97F9 /* PeopleViewController+Networking.swift */; };
 		22E960362045DA23007DF6FA /* PersonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E960352045DA23007DF6FA /* PersonViewController.swift */; };
 		22E960392046ED77007DF6FA /* People.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 22E960372046ED77007DF6FA /* People.xcdatamodeld */; };
 		22E9603C2046F224007DF6FA /* PeopleViewController+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E9603B2046F224007DF6FA /* PeopleViewController+CoreData.swift */; };
@@ -26,6 +27,7 @@
 		22703CAF2045CF8C00E75715 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		22703CB12045CF8C00E75715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228BBB1A2047262F002F97F9 /* PersonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCell.swift; sourceTree = "<group>"; };
+		228BBB1D2049AE35002F97F9 /* PeopleViewController+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeopleViewController+Networking.swift"; sourceTree = "<group>"; };
 		22E960352045DA23007DF6FA /* PersonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonViewController.swift; sourceTree = "<group>"; };
 		22E960382046ED77007DF6FA /* People.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = People.xcdatamodel; sourceTree = "<group>"; };
 		22E9603B2046F224007DF6FA /* PeopleViewController+CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeopleViewController+CoreData.swift"; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				22E9603A2046EE06007DF6FA /* person */,
 				22E960342045D9F8007DF6FA /* tableview */,
 				22E960332045D9EE007DF6FA /* coredata */,
+				228BBB1C2049AE12002F97F9 /* networking */,
 				22703CA52045CF8C00E75715 /* AppDelegate.swift */,
 				22703CA72045CF8C00E75715 /* PeopleViewController.swift */,
 				22703CAC2045CF8C00E75715 /* Assets.xcassets */,
@@ -72,6 +75,14 @@
 				22703CB12045CF8C00E75715 /* Info.plist */,
 			);
 			path = hellomongo;
+			sourceTree = "<group>";
+		};
+		228BBB1C2049AE12002F97F9 /* networking */ = {
+			isa = PBXGroup;
+			children = (
+				228BBB1D2049AE35002F97F9 /* PeopleViewController+Networking.swift */,
+			);
+			path = networking;
 			sourceTree = "<group>";
 		};
 		22E960332045D9EE007DF6FA /* coredata */ = {
@@ -178,6 +189,7 @@
 				22703CA62045CF8C00E75715 /* AppDelegate.swift in Sources */,
 				22E9603C2046F224007DF6FA /* PeopleViewController+CoreData.swift in Sources */,
 				228BBB1B2047262F002F97F9 /* PersonCell.swift in Sources */,
+				228BBB1E2049AE35002F97F9 /* PeopleViewController+Networking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
